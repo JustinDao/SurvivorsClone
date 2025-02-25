@@ -51,7 +51,7 @@ func movement() -> void:
 	pass
 
 
-func _on_hurt_box_hurt(damage: float) -> void:
+func _on_hurt_box_hurt(damage: float, _angle: Vector2, _knockback: float) -> void:
 	hp -= damage
 
 func attack() -> void:
