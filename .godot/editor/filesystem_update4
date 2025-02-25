@@ -10,3 +10,5 @@ res://Player/player.gd
 res://Player/Attack/ice_spear.gd
 res://Enemy/explosion.gd
 res://Enemy/explosion.tscn
+res://Player/Attack/tornado.tscn
+res://Player/Attack/tornado.gd
