@@ -141,8 +141,7 @@ func _on_tornado_attack_timer_timeout() -> void:
 func spawn_javelin() -> void:
 	var javelin_count = javelin_base.get_child_count()
 	var calc_spawns = javelin_ammo - javelin_count
-	while calc_spawns > 0:
+	for count in range(calc_spawns):
 		var new_javelin = javelin.instantiate()
 		new_javelin.global_position = global_position
 		javelin_base.add_child(new_javelin)
-		calc_spawns -= 1
