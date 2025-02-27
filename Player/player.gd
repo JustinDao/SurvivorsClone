@@ -4,6 +4,10 @@ var movement_speed: float = 80.0
 var hp: float = 80.0
 var last_movement: Vector2 = Vector2.UP
 
+var xp = 0
+var level = 1
+var xp_for_next_level = 0
+
 # Attacks
 var ice_spear = preload("res://Player/Attack/ice_spear.tscn")
 var tornado = preload("res://Player/Attack/tornado.tscn")
@@ -38,7 +42,12 @@ var enemy_close = []
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var walkTimer: Timer = get_node("WalkTimer")
 
+# GUI
+@onready var xp_bar: TextureProgressBar = $GUILayer/GUI/XpBar
+@onready var level_label: Label = $GUILayer/GUI/XpBar/LevelLabel
+
 func _ready() -> void:
+	xp_for_next_level = get_xp_for_next_level()
 	attack()
 
 func _physics_process(_delta: float) -> void:
@@ -145,3 +154,38 @@ func spawn_javelin() -> void:
 		var new_javelin = javelin.instantiate()
 		new_javelin.global_position = global_position
 		javelin_base.add_child(new_javelin)
+
+
+func _on_grab_area_area_entered(area: Area2D) -> void:
+	if area.is_in_group("loot"):
+		area.target = self
+
+
+func _on_collect_area_area_entered(area: Area2D) -> void:
+	if area.is_in_group("loot"):
+		var added_xp = area.collect()
+		calculate_experience(added_xp)
+
+func calculate_experience(added_xp: int) -> void:
+	xp += added_xp
+
+	if xp >= xp_for_next_level:
+		level += 1
+		xp_for_next_level = get_xp_for_next_level()
+
+		var remaining = xp - xp_for_next_level
+		xp = 0
+
+		if remaining > 0:
+			calculate_experience(remaining)
+	
+	level_label.text = "Level: " + str(level)
+	xp_bar.value = (float(xp) / xp_for_next_level * 100)
+	
+func get_xp_for_next_level() -> int:
+	if level < 20:
+		return level * 5
+	elif level < 40:
+		return 95 + (level - 19) * 8
+	else:
+		return 255 + (level - 39) * 12

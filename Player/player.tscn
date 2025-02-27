@@ -1,8 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://c0t6xyiorlmkj"]
+[gd_scene load_steps=12 format=3 uid="uid://c0t6xyiorlmkj"]
 
 [ext_resource type="Texture2D" uid="uid://ciu1cu45m1kq8" path="res://Textures/Player/player_sprite.png" id="1_ajp52"]
 [ext_resource type="Script" path="res://Player/player.gd" id="1_oigdw"]
 [ext_resource type="PackedScene" uid="uid://qgt7htf7pro3" path="res://Utility/hurt_box.tscn" id="3_h4ebk"]
+[ext_resource type="Texture2D" uid="uid://bjjn651t1vwbp" path="res://Textures/GUI/exp_background.png" id="4_drc3j"]
+[ext_resource type="Texture2D" uid="uid://cpsicj8fg852y" path="res://Textures/GUI/exp_progress.png" id="5_an1q1"]
+[ext_resource type="FontFile" uid="uid://cbshdeqe7orlh" path="res://Font/tenderness.otf" id="6_e2u6o"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sbr7e"]
 radius = 3.0
@@ -14,6 +17,11 @@ size = Vector2(10, 24)
 [sub_resource type="CircleShape2D" id="CircleShape2D_mjnjg"]
 radius = 369.005
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_4g2rr"]
+radius = 50.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_00ihq"]
+
 [node name="Player" type="CharacterBody2D" groups=["player"]]
 motion_mode = 1
 script = ExtResource("1_oigdw")
@@ -23,8 +31,10 @@ texture = ExtResource("1_ajp52")
 hframes = 2
 
 [node name="Camera2D" type="Camera2D" parent="."]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(2, 1)
 shape = SubResource("CapsuleShape2D_sbr7e")
 
@@ -33,6 +43,7 @@ wait_time = 0.2
 one_shot = true
 
 [node name="HurtBox" parent="." instance=ExtResource("3_h4ebk")]
+visible = false
 collision_layer = 2
 collision_mask = 2
 
@@ -41,6 +52,7 @@ position = Vector2(2, 2)
 shape = SubResource("RectangleShape2D_mefyq")
 
 [node name="Attack" type="Node2D" parent="."]
+visible = false
 
 [node name="IceSpearTimer" type="Timer" parent="Attack"]
 wait_time = 1.5
@@ -57,12 +69,53 @@ wait_time = 0.075
 [node name="JavelinBase" type="Node2D" parent="Attack"]
 
 [node name="EnemyDetectionArea" type="Area2D" parent="."]
+visible = false
 collision_layer = 4
 collision_mask = 4
 monitorable = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyDetectionArea"]
 shape = SubResource("CircleShape2D_mjnjg")
+
+[node name="GrabArea" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrabArea"]
+shape = SubResource("CircleShape2D_4g2rr")
+
+[node name="CollectArea" type="Area2D" parent="."]
+collision_layer = 8
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollectArea"]
+shape = SubResource("CircleShape2D_00ihq")
+
+[node name="GUILayer" type="CanvasLayer" parent="."]
+
+[node name="GUI" type="Control" parent="GUILayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+
+[node name="XpBar" type="TextureProgressBar" parent="GUILayer/GUI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture_under = ExtResource("4_drc3j")
+texture_progress = ExtResource("5_an1q1")
+
+[node name="LevelLabel" type="Label" parent="GUILayer/GUI/XpBar"]
+layout_mode = 0
+offset_left = 540.0
+offset_right = 640.0
+offset_bottom = 20.0
+theme_override_fonts/font = ExtResource("6_e2u6o")
+theme_override_font_sizes/font_size = 16
+text = "Level: 1"
+horizontal_alignment = 1
+vertical_alignment = 2
 
 [connection signal="hurt" from="HurtBox" to="." method="_on_hurt_box_hurt"]
 [connection signal="timeout" from="Attack/IceSpearTimer" to="." method="_on_ice_spear_timer_timeout"]
@@ -71,5 +124,7 @@ shape = SubResource("CircleShape2D_mjnjg")
 [connection signal="timeout" from="Attack/TornadoTimer/TornadoAttackTimer" to="." method="_on_tornado_attack_timer_timeout"]
 [connection signal="body_entered" from="EnemyDetectionArea" to="." method="_on_enemy_detection_area_body_entered"]
 [connection signal="body_exited" from="EnemyDetectionArea" to="." method="_on_enemy_detection_area_body_exited"]
+[connection signal="area_entered" from="GrabArea" to="." method="_on_grab_area_area_entered"]
+[connection signal="area_entered" from="CollectArea" to="." method="_on_collect_area_area_entered"]
 
 [editable path="HurtBox"]

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://brkcai8g6r6wx"]
+[gd_scene load_steps=5 format=3 uid="uid://brkcai8g6r6wx"]
 
 [ext_resource type="Texture2D" uid="uid://c87u1dmaa5kr3" path="res://Textures/dirt_full_new.png" id="1_rnui6"]
 [ext_resource type="PackedScene" uid="uid://c0t6xyiorlmkj" path="res://Player/player.tscn" id="2_kcygu"]
 [ext_resource type="PackedScene" uid="uid://xidn1ghyweny" path="res://Utility/enemy_spawner.tscn" id="3_vqn4f"]
+[ext_resource type="PackedScene" uid="uid://ci8b5xc1pvpt6" path="res://Objects/experience_gem.tscn" id="4_wsff2"]
 
 [node name="World" type="Node2D"]
 
@@ -15,6 +16,16 @@ region_enabled = true
 region_rect = Rect2(0, 0, 4000, 4000)
 
 [node name="Player" parent="." instance=ExtResource("2_kcygu")]
-position = Vector2(197, 215)
+position = Vector2(-4, -2)
 
 [node name="EnemySpawner" parent="." instance=ExtResource("3_vqn4f")]
+
+[node name="Loot" type="Node2D" parent="." groups=["loot"]]
+
+[node name="ExperienceGem" parent="Loot" instance=ExtResource("4_wsff2")]
+position = Vector2(59, -47)
+xp = 51
+
+[node name="ExperienceGem2" parent="Loot" instance=ExtResource("4_wsff2")]
+position = Vector2(100, -81)
+xp = 51
