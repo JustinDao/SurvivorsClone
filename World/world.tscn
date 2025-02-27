@@ -24,4 +24,4 @@ position = Vector2(-4, -2)
 
 [node name="ExperienceGem" parent="Loot" instance=ExtResource("4_wsff2")]
 position = Vector2(70, -24)
-xp = 50
+xp = 500

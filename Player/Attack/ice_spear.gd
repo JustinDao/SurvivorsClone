@@ -17,13 +17,25 @@ signal on_queue_free(object: Node2D)
 func _ready() -> void:
 	angle = global_position.direction_to(target)
 	rotation = angle.angle() + deg_to_rad(135)
+
+	# Default values
+	hp = 1
+	speed = 100.0
+	damage = 5
+	knockback_amount = 100
+	attack_size = 1.0 * (1 + player.spell_size)
+
 	match level:
 		1:
+			pass
+		2:
+			pass
+		3:
 			hp = 2
-			speed = 120.0
-			damage = 5
-			knockback_amount = 100
-			attack_size = 1.0
+			damage = 8
+		4:
+			pass
+			
 	var tween = create_tween()
 	tween.tween_property(self, "scale", Vector2(1, 1) * attack_size, 1).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 	tween.play()

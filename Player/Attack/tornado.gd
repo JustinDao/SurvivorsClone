@@ -17,13 +17,22 @@ var angle_more: Vector2 = Vector2.ZERO
 signal on_queue_free(object: Node2D)
 
 func _ready() -> void:
+	# Default values
+	hp = 9999
+	speed = 20.0
+	damage = 5
+	knockback_amount = 100
+	attack_size = 1.0 * (1 + player.spell_size)
+
 	match level:
 		1:
-			hp = 9999
-			speed = 20.0
-			damage = 5
-			knockback_amount = 100
-			attack_size = 1.0
+			pass
+		2:
+			pass
+		3:
+			pass
+		4:
+			knockback_amount = 125
 
 	var move_to_less = Vector2.ZERO
 	var move_to_more = Vector2.ZERO

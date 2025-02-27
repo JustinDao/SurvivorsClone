@@ -34,15 +34,26 @@ func _ready() -> void:
 
 func update_javelin() -> void:
 	level = player.javelin_level
+
+	# Default values
+	hp = 9999
+	speed = 200.0
+	damage = 10
+	knockback_amount = 100
+	attack_size = 1.0 * (1 + player.spell_size)
+	paths = 1
+	attack_speed = 5.0 * (1 - player.spell_cooldown)
+
 	match level:
 		1:
-			hp = 9999
-			speed = 200.0
-			damage = 10
-			knockback_amount = 200
-			attack_size = 1.0
-			paths = 1
-			attack_speed = 4.0
+			pass
+		2:
+			paths = 2
+		3:
+			paths = 3
+		4:
+			damage = 15
+			knockback_amount = 120
 	
 	scale = Vector2(1, 1) * attack_size
 	attack_timer.wait_time = attack_speed
