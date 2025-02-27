@@ -143,6 +143,7 @@ offset_right = 190.0
 offset_bottom = 100.0
 
 [node name="snd_level_up" type="AudioStreamPlayer2D" parent="GUILayer/GUI/LevelUp"]
+process_mode = 3
 stream = ExtResource("7_ywe88")
 volume_db = -10.0
 

@@ -21,6 +21,7 @@ position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_c5wow")
 
 [node name="snd_collect" type="AudioStreamPlayer2D" parent="."]
+process_mode = 3
 stream = ExtResource("3_xhlya")
 volume_db = -10.0
 
