@@ -7,6 +7,7 @@ var last_movement: Vector2 = Vector2.UP
 var xp = 0
 var level = 1
 var xp_for_next_level = 0
+var remaining_xp = 0
 
 # Attacks
 var ice_spear = preload("res://Player/Attack/ice_spear.tscn")
@@ -45,6 +46,12 @@ var enemy_close = []
 # GUI
 @onready var xp_bar: TextureProgressBar = $GUILayer/GUI/XpBar
 @onready var level_label: Label = $GUILayer/GUI/XpBar/LevelLabel
+
+@onready var level_up_panel: Panel = $GUILayer/GUI/LevelUp
+@onready var level_up_label: Label = $GUILayer/GUI/LevelUp/LevelUpLabel
+@onready var upgrade_options: VBoxContainer = $GUILayer/GUI/LevelUp/UpgradeOptions
+@onready var snd_level_up: AudioStreamPlayer2D = $GUILayer/GUI/LevelUp/snd_level_up
+var item_option = preload("res://Utility/item_option.tscn")
 
 func _ready() -> void:
 	xp_for_next_level = get_xp_for_next_level()
@@ -173,11 +180,9 @@ func calculate_experience(added_xp: int) -> void:
 		level += 1
 		xp_for_next_level = get_xp_for_next_level()
 
-		var remaining = xp - xp_for_next_level
+		remaining_xp = xp - xp_for_next_level
 		xp = 0
-
-		if remaining > 0:
-			calculate_experience(remaining)
+		level_up()
 	
 	level_label.text = "Level: " + str(level)
 	xp_bar.value = (float(xp) / xp_for_next_level * 100)
@@ -189,3 +194,33 @@ func get_xp_for_next_level() -> int:
 		return 95 + (level - 19) * 8
 	else:
 		return 255 + (level - 39) * 12
+
+# Level Up
+func level_up() -> void:
+	snd_level_up.play()
+	# Set Level Up Label
+	level_up_label.text = "Level " + str(level)
+	# Show Level Up Panel
+	level_up_panel.show()
+	# Instantiate Options
+	for i in range(3):
+		var new_option = item_option.instantiate()
+		upgrade_options.add_child(new_option)
+
+	# Animate Level Up Panel In
+	var levelTween = level_up_panel.create_tween()
+	levelTween.tween_property(level_up_panel, "position", Vector2(220, 50), 0.2).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
+	levelTween.play()
+	# Pause Game
+	get_tree().paused = true
+
+func upgrade_character(_item) -> void:
+	for option in upgrade_options.get_children():
+		option.queue_free()
+	# Hide Level Panel
+	level_up_panel.hide()
+	level_up_panel.position = Vector2(800, 50)
+	# Resume Game
+	get_tree().paused = false
+	if remaining_xp > 0:
+			calculate_experience(remaining_xp)

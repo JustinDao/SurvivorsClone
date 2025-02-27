@@ -23,9 +23,5 @@ position = Vector2(-4, -2)
 [node name="Loot" type="Node2D" parent="." groups=["loot"]]
 
 [node name="ExperienceGem" parent="Loot" instance=ExtResource("4_wsff2")]
-position = Vector2(59, -47)
-xp = 51
-
-[node name="ExperienceGem2" parent="Loot" instance=ExtResource("4_wsff2")]
-position = Vector2(100, -81)
-xp = 51
+position = Vector2(70, -24)
+xp = 50
