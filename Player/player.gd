@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+var elapsed_time_seconds: float = 0.0
+
 var movement_speed: float = 80.0
 var hp: float = 80.0
 var max_hp: float = 80.0
@@ -47,6 +49,11 @@ var enemy_close = []
 # GUI
 @onready var xp_bar: TextureProgressBar = $GUILayer/GUI/XpBar
 @onready var level_label: Label = $GUILayer/GUI/XpBar/LevelLabel
+@onready var health_bar: TextureProgressBar = $GUILayer/GUI/HealthBar
+@onready var timer_label: Label = $GUILayer/GUI/TimerLabel
+@onready var collected_weapons: GridContainer = $GUILayer/GUI/CollectedWeapons
+@onready var collected_upgrades: GridContainer = $GUILayer/GUI/CollectedUpgrades
+var item_container = preload("res://Player/GUI/item_container.tscn")
 
 @onready var level_up_panel: Panel = $GUILayer/GUI/LevelUp
 @onready var level_up_label: Label = $GUILayer/GUI/LevelUp/LevelUpLabel
@@ -56,6 +63,7 @@ var item_option = preload("res://Utility/item_option.tscn")
 
 # Upgrades
 var collected_items: Array[String] = []
+var collected_display_names: Array[String] = []
 var armor = 0
 var speed = 0
 var spell_cooldown = 0
@@ -63,11 +71,14 @@ var spell_size = 0
 var additional_attacks = 0
 
 func _ready() -> void:
+	health_bar.value = hp
+	health_bar.max_value = max_hp
 	xp_for_next_level = get_xp_for_next_level()
 	upgrade_character("icespear1")
 	
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	movement()
+	update_time(delta)
 
 func movement() -> void:
 	var x_mov: float = Input.get_action_strength('right') - Input.get_action_strength('left')
@@ -90,11 +101,11 @@ func movement() -> void:
 	
 	velocity = mov.normalized() * movement_speed
 	move_and_slide()
-	pass
 
 
 func _on_hurt_box_hurt(damage: float, _angle: Vector2, _knockback: float) -> void:
 	hp -= clamp(damage - armor, 0, damage)
+	health_bar.value = hp
 
 func get_random_target() -> Vector2:
 	if enemy_close.size() > 0:
@@ -239,6 +250,7 @@ func upgrade_character(item: String) -> void:
 	# Add Item to Collected Items if not Food
 	if item != "food":
 		collected_items.append(item)
+		update_item_gui(item)
 	# Hide Level Panel
 	level_up_panel.hide()
 	level_up_panel.position = Vector2(800, 50)
@@ -323,3 +335,32 @@ func apply_upgrade(item: String) -> void:
 		"food":
 			hp += 20
 			hp = clamp(hp, 0, max_hp)
+
+func update_time(delta: float) -> void:
+	elapsed_time_seconds += delta
+	var minutes = int(elapsed_time_seconds / 60)
+	var seconds = int(elapsed_time_seconds) % 60
+
+	var minute_text = str(minutes) if minutes > 9 else "0" + str(minutes)
+	var second_text = str(seconds) if seconds > 9 else "0" + str(seconds)
+	timer_label.text = minute_text + ":" + second_text
+
+func update_item_gui(item: String) -> void:
+	var upgrade = Upgrades.UPGRADES[item]
+	var type = upgrade["type"]
+	var display_name = upgrade["display_name"]
+
+	if type == "item":
+		return
+
+	if collected_display_names.has(display_name):
+		return
+	
+	collected_display_names.append(display_name)
+	var new_item_container = item_container.instantiate()
+	new_item_container.item = item
+	match type:
+		"weapon":
+			collected_weapons.add_child(new_item_container)
+		"upgrade":
+			collected_upgrades.add_child(new_item_container)
