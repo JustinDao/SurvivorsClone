@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c0t6xyiorlmkj"]
+[gd_scene load_steps=18 format=3 uid="uid://c0t6xyiorlmkj"]
 
 [ext_resource type="Texture2D" uid="uid://ciu1cu45m1kq8" path="res://Textures/Player/player_sprite.png" id="1_ajp52"]
 [ext_resource type="Script" path="res://Player/player.gd" id="1_oigdw"]
@@ -9,6 +9,9 @@
 [ext_resource type="AudioStream" uid="uid://dowsakbd3kbwn" path="res://Audio/SoundEffect/levelup.ogg" id="7_ywe88"]
 [ext_resource type="Texture2D" uid="uid://xy6p0xblmm18" path="res://Textures/GUI/healthbar.png" id="8_fwts8"]
 [ext_resource type="Texture2D" uid="uid://bxmgpqsekg11y" path="res://Textures/GUI/health.png" id="9_bk83k"]
+[ext_resource type="AudioStream" uid="uid://dhms4kflhwsiw" path="res://Audio/SoundEffect/Victory.wav" id="10_jfdfb"]
+[ext_resource type="AudioStream" uid="uid://dad2i15ayee18" path="res://Audio/SoundEffect/Lose.ogg" id="11_0c80g"]
+[ext_resource type="PackedScene" uid="uid://vnpk6mpcljcf" path="res://Utility/basic_button.tscn" id="12_8krhh"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_sbr7e"]
 radius = 3.0
@@ -188,6 +191,42 @@ process_mode = 3
 stream = ExtResource("7_ywe88")
 volume_db = -10.0
 
+[node name="ResultPanel" type="Panel" parent="GUILayer/GUI"]
+process_mode = 2
+visible = false
+layout_mode = 0
+offset_left = 706.0
+offset_top = -98.0
+offset_right = 906.0
+offset_bottom = 152.0
+
+[node name="ResultLabel" type="Label" parent="GUILayer/GUI/ResultPanel"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 50.0
+theme_override_fonts/font = ExtResource("6_e2u6o")
+text = "Result"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="snd_win" type="AudioStreamPlayer2D" parent="GUILayer/GUI/ResultPanel"]
+process_mode = 3
+stream = ExtResource("10_jfdfb")
+volume_db = -10.0
+
+[node name="snd_lose" type="AudioStreamPlayer2D" parent="GUILayer/GUI/ResultPanel"]
+process_mode = 3
+stream = ExtResource("11_0c80g")
+volume_db = -10.0
+
+[node name="MenuBasicButton" parent="GUILayer/GUI/ResultPanel" instance=ExtResource("12_8krhh")]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 200.0
+offset_right = 140.0
+offset_bottom = 230.0
+text = "Menu"
+
 [connection signal="hurt" from="HurtBox" to="." method="_on_hurt_box_hurt"]
 [connection signal="timeout" from="Attack/IceSpearTimer" to="." method="_on_ice_spear_timer_timeout"]
 [connection signal="timeout" from="Attack/IceSpearTimer/IceSpearAttackTimer" to="." method="_on_ice_spear_attack_timer_timeout"]
@@ -197,5 +236,6 @@ volume_db = -10.0
 [connection signal="body_exited" from="EnemyDetectionArea" to="." method="_on_enemy_detection_area_body_exited"]
 [connection signal="area_entered" from="GrabArea" to="." method="_on_grab_area_area_entered"]
 [connection signal="area_entered" from="CollectArea" to="." method="_on_collect_area_area_entered"]
+[connection signal="click_end" from="GUILayer/GUI/ResultPanel/MenuBasicButton" to="." method="_on_menu_basic_button_click_end"]
 
 [editable path="HurtBox"]

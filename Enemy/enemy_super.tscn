@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://b7qjk5heio7q5"]
 
-[ext_resource type="Script" path="res://Enemy/enemy.gd" id="1_4y431"]
+[ext_resource type="Script" path="res://Enemy/enemy_super.gd" id="1_sn5eg"]
 [ext_resource type="Texture2D" uid="uid://sihw67r0hpxf" path="res://Textures/Enemy/giant_amoeba_new.png" id="2_twcq8"]
 [ext_resource type="PackedScene" uid="uid://rgrfj5blubt4" path="res://Utility/hit_box.tscn" id="3_qexyw"]
 [ext_resource type="PackedScene" uid="uid://qgt7htf7pro3" path="res://Utility/hurt_box.tscn" id="4_b6s55"]
@@ -61,12 +61,8 @@ scale = Vector2(5, 5)
 collision_layer = 5
 collision_mask = 5
 motion_mode = 1
-script = ExtResource("1_4y431")
-movement_speed = 20.0
-hp = 900.0
-knockback_recovery = 999999.0
-xp = 100
-damage = 20
+script = ExtResource("1_sn5eg")
+hp = 1.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_twcq8")
@@ -103,6 +99,7 @@ shape = SubResource("RectangleShape2D_kwf6q")
 stream = ExtResource("5_lqi4c")
 volume_db = -20.0
 
+[connection signal="on_queue_free" from="." to="." method="_on_on_queue_free"]
 [connection signal="hurt" from="HurtBox" to="." method="_on_hurt_box_hurt"]
 
 [editable path="HitBox"]

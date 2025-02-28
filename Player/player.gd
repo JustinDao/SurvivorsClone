@@ -61,6 +61,12 @@ var item_container = preload("res://Player/GUI/item_container.tscn")
 @onready var snd_level_up: AudioStreamPlayer2D = $GUILayer/GUI/LevelUp/snd_level_up
 var item_option = preload("res://Utility/item_option.tscn")
 
+@onready var result_panel: Panel = $GUILayer/GUI/ResultPanel
+@onready var result_label: Label = $GUILayer/GUI/ResultPanel/ResultLabel
+@onready var snd_win: AudioStreamPlayer2D = $GUILayer/GUI/ResultPanel/snd_win
+@onready var snd_lose: AudioStreamPlayer2D = $GUILayer/GUI/ResultPanel/snd_lose
+@onready var menu_button: Button = $GUILayer/GUI/ResultPanel/MenuBasicButton
+
 # Upgrades
 var collected_items: Array[String] = []
 var collected_display_names: Array[String] = []
@@ -106,7 +112,25 @@ func movement() -> void:
 func _on_hurt_box_hurt(damage: float, _angle: Vector2, _knockback: float) -> void:
 	hp -= clamp(damage - armor, 0, damage)
 	health_bar.value = hp
+	if hp <= 0:
+		# Player is dead
+		show_result()
 
+func show_result() -> void:
+	result_panel.show()
+	get_tree().paused = true
+	# Animate Result Panel In
+	var tween = result_panel.create_tween()
+	tween.tween_property(result_panel, "position", Vector2(220, 50), 3).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	tween.play()
+	# Don't need to kill the final boss to win
+	if elapsed_time_seconds >= 300:
+		result_label.text = "You Win!"
+		snd_win.play()
+	else:
+		result_label.text = "You Lose!"
+		snd_lose.play()
+		
 func get_random_target() -> Vector2:
 	if enemy_close.size() > 0:
 		return enemy_close.pick_random().global_position
@@ -364,3 +388,7 @@ func update_item_gui(item: String) -> void:
 			collected_weapons.add_child(new_item_container)
 		"upgrade":
 			collected_upgrades.add_child(new_item_container)
+
+func _on_menu_basic_button_click_end() -> void:
+	get_tree().paused = false
+	var _level = get_tree().change_scene_to_file("res://TitleScreen/menu.tscn")
