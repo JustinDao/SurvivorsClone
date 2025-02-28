@@ -4,11 +4,13 @@ extends CharacterBody2D
 @export var hp: float = 10.0
 @export var knockback_recovery: float = 3.5
 @export var xp: int = 1
+@export var damage: int = 1
 var knockback: Vector2 = Vector2.ZERO
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var animation: AnimationPlayer = $AnimationPlayer
 @onready var snd_hit: AudioStreamPlayer2D = $snd_hit
+@onready var hit_box = $HitBox
 
 @onready var player: Node = get_tree().get_first_node_in_group("player")
 var death_animation = preload("res://Enemy/explosion.tscn")
@@ -20,6 +22,7 @@ signal on_queue_free(object: Node2D)
 
 func _ready() -> void:
 	animation.play("walk")
+	hit_box.damage = damage
 
 func _physics_process(_delta: float) -> void:
 	knockback = knockback.move_toward(Vector2.ZERO, knockback_recovery)
@@ -46,8 +49,8 @@ func death() -> void:
 	loot_group.call_deferred("add_child", new_gem)
 	queue_free()
 
-func _on_hurt_box_hurt(damage: float, angle: Vector2, knockback_amount: float) -> void:
-	hp -= damage
+func _on_hurt_box_hurt(damage_amount: float, angle: Vector2, knockback_amount: float) -> void:
+	hp -= damage_amount
 	if hp <= 0:
 		death()
 	else:
