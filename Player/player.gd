@@ -67,6 +67,8 @@ var item_option = preload("res://Utility/item_option.tscn")
 @onready var snd_lose: AudioStreamPlayer2D = $GUILayer/GUI/ResultPanel/snd_lose
 @onready var menu_button: Button = $GUILayer/GUI/ResultPanel/MenuBasicButton
 
+signal player_death()
+
 # Upgrades
 var collected_items: Array[String] = []
 var collected_display_names: Array[String] = []
@@ -115,7 +117,8 @@ func _on_hurt_box_hurt(damage: float, _angle: Vector2, _knockback: float) -> voi
 	if hp <= 0:
 		# Player is dead
 		show_result()
-
+		player_death.emit()
+		
 func show_result() -> void:
 	result_panel.show()
 	get_tree().paused = true
